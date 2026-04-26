@@ -24,33 +24,37 @@
         th { background: #f1f2f6; padding: 10px; font-size: 0.65rem; color: #778ca3; text-transform: uppercase; }
         td { padding: 10px; text-align: center; border-bottom: 1px solid #f1f2f6; font-size: 0.8rem; }
 
-        /* --- NUEVO ESTILO PARA EL NÚMERO DE PEDIDO --- */
-        .order-number { 
-            font-size: 1.4rem; 
-            color: var(--azul); 
-            display: block; 
-            font-weight: 800;
-        }
-        .client-ref { 
-            font-size: 0.75rem; 
-            color: #7f8c8d; 
-            font-weight: normal; 
-        }
-        /* ------------------------------------------- */
+        .order-number { font-size: 1.4rem; color: var(--azul); display: block; font-weight: 800; }
+        .client-ref { font-size: 0.75rem; color: #7f8c8d; font-weight: normal; }
 
         .status-badge { padding: 4px 0; border-radius: 4px; color: white; font-weight: bold; font-size: 0.6rem; display: inline-block; width: 75px; }
         .bg-hecho { background-color: var(--verde); }
         .bg-pendiente { background-color: var(--rojo); }
 
         .btn-llegada { background: var(--azul); color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; width: 100%; }
+        
+        /* --- ESTILOS ADVERTENCIA Y TIMER --- */
+        .timer-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px; }
         .timer-val { font-family: monospace; font-size: 0.9rem; font-weight: bold; color: var(--rojo); }
+        
+        .warning-icon { 
+            font-size: 1.2rem; 
+            animation: blink 1s infinite; 
+            cursor: help;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
 
         @media (min-width: 768px) {
             body { padding: 20px; }
             h1 { font-size: 1.5rem; }
             td, th { padding: 15px; font-size: 0.85rem; }
             .tab-btn { padding: 14px 28px; font-size: 0.9rem; }
-            .order-number { font-size: 1.8rem; } /* Aún más grande en pantallas grandes */
+            .order-number { font-size: 1.8rem; }
         }
 
         .watermark-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; z-index: 10000; overflow: hidden; }
@@ -114,6 +118,10 @@
         data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).forEach(p => {
             const tr = document.createElement('tr');
             if(p.esperando) tr.className = 'waiting-row';
+            
+            // Verificamos si todos los estados son true (HECHO)
+            const pedidoTodoListo = p.estados.every(estado => estado === true);
+
             tr.innerHTML = `
                 <td>
                     <span class="order-number">#${p.id}</span>
@@ -121,8 +129,13 @@
                 </td>
                 ${p.estados.map(e => `<td><span class="status-badge ${e ? 'bg-hecho' : 'bg-pendiente'}">${e ? 'HECHO' : 'PEND'}</span></td>`).join('')}
                 <td>
-                    <button class="btn-llegada" onclick="marcarLlegada('${p.id}')" ${p.esperando ? 'disabled' : ''}>${p.esperando ? 'ESPERA' : 'LLEGADA'}</button>
-                    <div class="timer-val" id="timer-${p.id}">${p.esperando ? formatTime(activeTimers[p.id]) : '--:--'}</div>
+                    <button class="btn-llegada" onclick="marcarLlegada('${p.id}')" ${p.esperando ? 'disabled' : ''}>
+                        ${p.esperando ? 'ESPERA' : 'LLEGADA'}
+                    </button>
+                    <div class="timer-container">
+                        <span class="timer-val" id="timer-${p.id}">${p.esperando ? formatTime(activeTimers[p.id]) : '--:--'}</span>
+                        ${p.esperando && !pedidoTodoListo ? '<span class="warning-icon" title="¡ATENCIÓN! Cliente esperando y pedido incompleto">⚠️</span>' : ''}
+                    </div>
                 </td>`;
             tbody.appendChild(tr);
         });
@@ -145,8 +158,11 @@
     function marcarLlegada(id) {
         let idx = pedidosNoListos.findIndex(p => p.id === id);
         let p = idx !== -1 ? pedidosNoListos.splice(idx, 1)[0] : pedidosListos.splice(pedidosListos.findIndex(p => p.id === id), 1)[0];
-        p.esperando = true; activeTimers[id] = 0; pedidosNoListos.unshift(p);
-        currentTab = 'pendientes'; render();
+        p.esperando = true; 
+        activeTimers[id] = 0; // Arranca el tiempo
+        pedidosNoListos.unshift(p);
+        currentTab = 'pendientes'; 
+        render();
     }
 
     function changeTab(tab) { currentTab = tab; currentPage = 1; render(); }
