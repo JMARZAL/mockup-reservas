@@ -105,8 +105,8 @@
     let currentPage = 1, itemsPerPage = 5, currentTab = 'pendientes', activeTimers = {};
     const genID = (n) => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
 
-    let pedidosNoListos = Array.from({length: 12}, (_, i) => ({ id: genID(i), cliente: "Ref." + (i + 1), estados: [true, true, Math.random() > 0.5, false, false], esperando: false }));
-    let pedidosListos = Array.from({length: 4}, (_, i) => ({ id: genID(i + 100), cliente: "VIP." + (i + 100), estados: [true, true, true, true, true], esperando: false }));
+    let pedidosNoListos = Array.from({length: 12}, (_, i) => ({ id: genID(i), cliente: "Nom. Cliente." + (i + 1), estados: [true, true, Math.random() > 0.5, false, false], esperando: false }));
+    let pedidosListos = Array.from({length: 4}, (_, i) => ({ id: genID(i + 100), cliente: "Nom. Cliente." + (i + 100), estados: [true, true, true, true, true], esperando: false }));
 
     function render() {
         const data = currentTab === 'pendientes' ? pedidosNoListos : pedidosListos;
