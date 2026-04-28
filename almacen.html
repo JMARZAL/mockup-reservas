@@ -5,108 +5,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Control Recogida - Cargando...</title>
     <style>
-        :root { --rojo: #ff4d4d; --verde: #2ecc71; --azul: #3498db; --fondo: #f4f7f6; --texto: #2c3e50; --oscuro: #1e272e; --naranja: #f39c12; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fondo); margin: 0; padding: 10px; }
+        :root {
+            --rojo: #ff4d4d;
+            --verde: #2ecc71;
+            --azul: #3498db;
+            --fondo: #f4f7f6;
+            --texto: #2c3e50;
+            --oscuro: #1e272e;
+            --naranja: #f39c12;
+            --amarillo-alerta: #f1c40f;
+        }
 
-        header { background: var(--oscuro); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
-        .settings-link { position: absolute; top: 15px; right: 15px; cursor: pointer; color: #bdc3c7; }
-        .settings-link svg { width: 24px; height: 24px; fill: currentColor; }
-        h1 { margin: 0; font-size: 1.1rem; padding-right: 30px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fondo);
+            margin: 0;
+            padding: 20px;
+        }
 
-        .tabs { display: flex; gap: 5px; overflow-x: auto; margin-bottom: -2px; }
-        .tab-btn { padding: 10px 15px; border: none; background: #d1d8e0; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0; font-size: 0.8rem; white-space: nowrap; }
+        /* --- MARCA DE AGUA --- */
+        .watermark-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none; z-index: 10000; overflow: hidden;
+        }
+        .watermark-text {
+            color: rgba(0, 0, 0, 0.05); font-size: 7vw; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 10px;
+            transform: rotate(-35deg); white-space: nowrap; user-select: none;
+        }
+
+        /* --- OVERLAY DE ALERTA (CAMPANA) --- */
+        #alerta-cliente {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--amarillo-alerta);
+            z-index: 20000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .campana-svg {
+            width: 50%;
+            height: 50%;
+            fill: var(--oscuro);
+            animation: balanceo 0.5s infinite ease-in-out;
+        }
+
+        .alerta-texto {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--oscuro);
+            margin-top: 20px;
+            text-transform: uppercase;
+        }
+
+        @keyframes balanceo {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* --- RESTO DE ESTILOS --- */
+        header {
+            background: var(--oscuro);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .settings-link {
+            position: absolute; top: 50%; right: 25px; transform: translateY(-50%);
+            cursor: pointer; color: #bdc3c7; transition: 0.3s; display: flex; align-items: center;
+        }
+        .settings-link:hover { color: white; transform: translateY(-50%) rotate(90deg); }
+        .settings-link svg { width: 28px; height: 28px; fill: currentColor; }
+
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; padding-right: 40px; }
+
+        .tabs { display: flex; gap: 8px; margin-bottom: -2px; }
+        .tab-btn {
+            padding: 14px 28px; border: none; background: #d1d8e0;
+            cursor: pointer; font-weight: bold; border-radius: 10px 10px 0 0;
+            transition: 0.3s; color: #4b6584;
+        }
         .tab-btn.active { background: white; color: var(--azul); border-bottom: 3px solid var(--azul); }
 
-        .container { background: white; padding: 10px; border-radius: 0 12px 12px 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); overflow: hidden; }
-        
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: #f1f2f6; padding: 10px; font-size: 0.65rem; color: #778ca3; text-transform: uppercase; }
-        td { padding: 10px; text-align: center; border-bottom: 1px solid #f1f2f6; font-size: 0.8rem; }
+        .container {
+            background: white; padding: 20px; border-radius: 0 12px 12px 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); min-height: 480px;
+        }
 
-        .order-number { font-size: 1.4rem; color: var(--azul); display: block; font-weight: 800; }
-        .client-ref { font-size: 0.75rem; color: #7f8c8d; font-weight: normal; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f2f6; padding: 15px; font-size: 0.7rem; color: #778ca3; text-transform: uppercase; border-bottom: 2px solid #dfe4ea; }
+        td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #f1f2f6; font-size: 0.85rem; }
 
-        .status-badge { padding: 4px 0; border-radius: 4px; color: white; font-weight: bold; font-size: 0.6rem; display: inline-block; width: 75px; }
+        .status-badge { padding: 6px 0; border-radius: 5px; color: white; font-weight: bold; font-size: 0.65rem; display: inline-block; width: 85px; }
         .bg-hecho { background-color: var(--verde); }
         .bg-pendiente { background-color: var(--rojo); }
 
-        .btn-llegada { background: var(--azul); color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; width: 100%; }
-        
-        /* --- ESTILOS ADVERTENCIA Y TIMER --- */
-        .timer-container { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px; }
-        .timer-val { font-family: monospace; font-size: 0.9rem; font-weight: bold; color: var(--rojo); }
-        
-        .warning-icon { 
-            font-size: 1.2rem; 
-            animation: blink 1s infinite; 
-            cursor: help;
-        }
+        .pagination { display: flex; justify-content: center; gap: 5px; padding: 20px 0; }
+        .page-num { padding: 8px 14px; border: 1px solid #dcdde1; background: white; cursor: pointer; border-radius: 6px; font-weight: bold; }
+        .page-num.active { background: var(--azul); color: white; border-color: var(--azul); }
 
-        @keyframes blink {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        .btn-llegada { background: var(--azul); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
+        .timer-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
+        .timer-val { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: var(--rojo); }
+        .warning-icon { font-size: 1.3rem; animation: blink 1s infinite; }
 
-        @media (min-width: 768px) {
-            body { padding: 20px; }
-            h1 { font-size: 1.5rem; }
-            td, th { padding: 15px; font-size: 0.85rem; }
-            .tab-btn { padding: 14px 28px; font-size: 0.9rem; }
-            .order-number { font-size: 1.8rem; }
-        }
-
-        .watermark-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; pointer-events: none; z-index: 10000; overflow: hidden; }
-        .watermark-text { color: rgba(0, 0, 0, 0.05); font-size: 7vw; font-weight: 900; text-transform: uppercase; transform: rotate(-35deg); white-space: nowrap; user-select: none; }
+        @keyframes blink { 0% { opacity: 1; transform: scale(1.1); } 50% { opacity: 0.3; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.1); } }
         .waiting-row { background-color: #fff4e5 !important; border-left: 5px solid var(--naranja); }
     </style>
 </head>
 <body>
 
+<div id="alerta-cliente">
+    <svg class="campana-svg" viewBox="0 0 24 24">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/>
+    </svg>
+    <div class="alerta-texto">¡CLIENTE EN MOSTRADOR!</div>
+</div>
+
 <header>
-    <h1 id="header-title">Control Recogida</h1>
-    <a href="index.html" class="settings-link"><svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L13.4,2.81c-0.05-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L8.25,5.33c-0.58,0.24-1.12,0.56-1.62,0.94l-2.39-0.96c-0.22-0.08-0.47,0-0.59,0.22L1.74,8.87 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C3.84,11.36,3.82,11.67,3.82,12c0,0.33,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg></a>
+    <h1 id="header-title">Control Recogida de pedidos Urgentes</h1>
+    <a href="index.html" class="settings-link" title="Cambiar de Almacén">
+        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L13.4,2.81c-0.05-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L8.25,5.33c-0.58,0.24-1.12,0.56-1.62,0.94l-2.39-0.96c-0.22-0.08-0.47,0-0.59,0.22L1.74,8.87 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C3.84,11.36,3.82,11.67,3.82,12c0,0.33,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+    </a>
 </header>
 
 <div class="tabs">
-    <button class="tab-btn active" id="btn-tab-pendientes" onclick="changeTab('pendientes')">📦 NO LISTOS (<span id="count-p">0</span>)</button>
-    <button class="tab-btn" id="btn-tab-listos" onclick="changeTab('listos')">✅ LISTOS (<span id="count-l">0</span>)</button>
+    <button class="tab-btn active" id="btn-tab-pendientes" onclick="changeTab('pendientes')">
+        📦 NO LISTOS (<span id="count-p">0</span>)
+    </button>
+    <button class="tab-btn" id="btn-tab-listos" onclick="changeTab('listos')">
+        ✅ LISTOS (<span id="count-l">0</span>)
+    </button>
 </div>
 
 <div class="container">
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Pedido</th>
-                    <th>P. Preparar</th>
-                    <th>En Prep.</th>
-                    <th>A Controlar</th>
-                    <th>A Consolidar</th>
-                    <th>Listo</th>
-                    <th>Gestión Cliente</th>
-                </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-        </table>
-    </div>
-    <div id="pagination"></div>
+    <table>
+        <thead>
+            <tr>
+                <th>Pedido</th><th>P. Preparar</th><th>En Prep.</th><th>A Controlar</th><th>A Consolidar</th><th>Listo</th><th>Gestión Cliente</th>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+    <div class="pagination" id="pagination"></div>
 </div>
 
+<div class="watermark-overlay"><span class="watermark-text">MOCKUP DIGITAL. USO INTERNO</span></div>
+
 <script>
+    // --- PERSONALIZACIÓN ---
     const almacenTextoCompleto = localStorage.getItem('almacenActual') || '012 - USERA';
     const codigoAlmacen = almacenTextoCompleto.substring(0, 3);
     const prefijoPedido = "3" + codigoAlmacen;
 
-    document.getElementById('header-title').innerText = `Recogida Urgente: ${almacenTextoCompleto}`;
-    document.getElementById('page-title').innerText = `Control - ${almacenTextoCompleto}`;
+    document.getElementById('header-title').innerText = `Control Recogida de pedidos Urgentes Almacén de ${almacenTextoCompleto}`;
+    document.getElementById('page-title').innerText = `Control Recogida - ${almacenTextoCompleto}`;
 
-    let currentPage = 1, itemsPerPage = 5, currentTab = 'pendientes', activeTimers = {};
+    // --- LÓGICA DE DATOS ---
+    let currentPage = 1;
+    const itemsPerPage = 5; 
+    let currentTab = 'pendientes';
+    let activeTimers = {}; 
+
     const genID = (n) => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
 
-    let pedidosNoListos = Array.from({length: 12}, (_, i) => ({ id: genID(i), cliente: "Nom. Cliente." + (i + 1), estados: [true, true, Math.random() > 0.5, false, false], esperando: false }));
-    let pedidosListos = Array.from({length: 4}, (_, i) => ({ id: genID(i + 100), cliente: "Nom. Cliente." + (i + 100), estados: [true, true, true, true, true], esperando: false }));
+    let pedidosNoListos = Array.from({length: 17}, (_, i) => ({
+        id: genID(i), cliente: "Cliente Ref." + (i + 1),
+        estados: [true, true, Math.random() > 0.5, false, false], esperando: false
+    }));
+
+    let pedidosListos = Array.from({length: 4}, (_, i) => ({
+        id: genID(i + 100), cliente: "VIP Ref." + (i + 100),
+        estados: [true, true, true, true, true], esperando: false
+    }));
 
     function render() {
         const data = currentTab === 'pendientes' ? pedidosNoListos : pedidosListos;
@@ -115,28 +199,29 @@
         document.getElementById('count-p').innerText = pedidosNoListos.length;
         document.getElementById('count-l').innerText = pedidosListos.length;
 
-        data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).forEach(p => {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageItems = data.slice(start, end);
+
+        pageItems.forEach(p => {
             const tr = document.createElement('tr');
             if(p.esperando) tr.className = 'waiting-row';
-            
-            // Verificamos si todos los estados son true (HECHO)
-            const pedidoTodoListo = p.estados.every(estado => estado === true);
+            const estaCompleto = p.estados.every(e => e === true);
+            const mostrarWarning = p.esperando && !estaCompleto;
 
             tr.innerHTML = `
-                <td>
-                    <span class="order-number">#${p.id}</span>
-                    <span class="client-ref">${p.cliente}</span>
-                </td>
-                ${p.estados.map(e => `<td><span class="status-badge ${e ? 'bg-hecho' : 'bg-pendiente'}">${e ? 'HECHO' : 'PEND'}</span></td>`).join('')}
+                <td><strong>#${p.id}</strong><br><small style="color:#95a5a6">${p.cliente}</small></td>
+                ${p.estados.map(e => `<td><span class="status-badge ${e ? 'bg-hecho' : 'bg-pendiente'}">${e ? 'HECHO' : 'PENDIENTE'}</span></td>`).join('')}
                 <td>
                     <button class="btn-llegada" onclick="marcarLlegada('${p.id}')" ${p.esperando ? 'disabled' : ''}>
-                        ${p.esperando ? 'ESPERA' : 'LLEGADA'}
+                        ${p.esperando ? 'ESPERANDO' : 'LLEGADA CLIENTE'}
                     </button>
                     <div class="timer-container">
                         <span class="timer-val" id="timer-${p.id}">${p.esperando ? formatTime(activeTimers[p.id]) : '--:--'}</span>
-                        ${p.esperando && !pedidoTodoListo ? '<span class="warning-icon" title="¡ATENCIÓN! Cliente esperando y pedido incompleto">⚠️</span>' : ''}
+                        ${mostrarWarning ? '<span class="warning-icon">⚠️</span>' : ''}
                     </div>
-                </td>`;
+                </td>
+            `;
             tbody.appendChild(tr);
         });
         renderPagination(data.length);
@@ -145,31 +230,69 @@
     function renderPagination(total) {
         const pagDiv = document.getElementById('pagination');
         pagDiv.innerHTML = '';
-        for (let i = 1; i <= Math.ceil(total / itemsPerPage); i++) {
+        const pages = Math.ceil(total / itemsPerPage);
+        if(pages <= 1) return;
+        for (let i = 1; i <= pages; i++) {
             const btn = document.createElement('button');
             btn.innerText = i; btn.className = `page-num ${i === currentPage ? 'active' : ''}`;
-            btn.style = "margin: 5px; padding: 5px 10px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: white;";
-            if(i === currentPage) { btn.style.backgroundColor = 'var(--azul)'; btn.style.color = 'white'; }
             btn.onclick = () => { currentPage = i; render(); };
             pagDiv.appendChild(btn);
         }
     }
 
     function marcarLlegada(id) {
-        let idx = pedidosNoListos.findIndex(p => p.id === id);
-        let p = idx !== -1 ? pedidosNoListos.splice(idx, 1)[0] : pedidosListos.splice(pedidosListos.findIndex(p => p.id === id), 1)[0];
-        p.esperando = true; 
-        activeTimers[id] = 0; // Arranca el tiempo
-        pedidosNoListos.unshift(p);
-        currentTab = 'pendientes'; 
+        // 1. Mostrar la pantalla de alerta de campana
+        const alerta = document.getElementById('alerta-cliente');
+        alerta.style.display = 'flex';
+
+        // 2. Procesar la lógica del pedido por detrás
+        let pedidoObj = null;
+        let index = pedidosNoListos.findIndex(p => p.id === id);
+        if (index !== -1) {
+            pedidoObj = pedidosNoListos.splice(index, 1)[0];
+        } else {
+            index = pedidosListos.findIndex(p => p.id === id);
+            if (index !== -1) pedidoObj = pedidosListos.splice(index, 1)[0];
+        }
+
+        if (pedidoObj) {
+            pedidoObj.esperando = true;
+            activeTimers[id] = 0;
+            pedidosNoListos.unshift(pedidoObj);
+            currentTab = 'pendientes';
+            currentPage = 1;
+            document.getElementById('btn-tab-pendientes').classList.add('active');
+            document.getElementById('btn-tab-listos').classList.remove('active');
+            render();
+        }
+
+        // 3. Quitar la alerta tras 2 segundos
+        setTimeout(() => {
+            alerta.style.display = 'none';
+        }, 2000);
+    }
+
+    function changeTab(tab) {
+        currentTab = tab; currentPage = 1;
+        document.getElementById('btn-tab-pendientes').classList.toggle('active', tab === 'pendientes');
+        document.getElementById('btn-tab-listos').classList.toggle('active', tab === 'listos');
         render();
     }
 
-    function changeTab(tab) { currentTab = tab; currentPage = 1; render(); }
-    function formatTime(s) { return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
-    setInterval(() => { for (let id in activeTimers) { activeTimers[id]++; const el = document.getElementById(`timer-${id}`); if(el) el.innerText = formatTime(activeTimers[id]); } }, 1000);
+    function formatTime(s) {
+        const min = Math.floor(s / 60); const sec = s % 60;
+        return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    setInterval(() => {
+        for (let id in activeTimers) {
+            activeTimers[id]++;
+            const el = document.getElementById(`timer-${id}`);
+            if (el) el.innerText = formatTime(activeTimers[id]);
+        }
+    }, 1000);
+
     render();
 </script>
-<div class="watermark-overlay"><span class="watermark-text">MOCKUP DIGITAL. USO INTERNO</span></div>
 </body>
 </html>
