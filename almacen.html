@@ -89,7 +89,6 @@
         th { background: #f1f2f6; padding: 15px; font-size: 0.75rem; color: var(--gris-suave); text-transform: uppercase; border-bottom: 2px solid #dfe4ea; }
         td { padding: 15px; text-align: center; border-bottom: 1px solid #f1f2f6; }
 
-        /* Estilo para el ID de pedido más grande */
         .order-id {
             font-size: 1.3rem;
             font-weight: 800;
@@ -100,7 +99,6 @@
         .bg-hecho { background-color: var(--verde); }
         .bg-pendiente { background-color: var(--rojo); }
 
-        /* Badge 2H */
         .badge-2h {
             background: var(--oscuro);
             color: #f1c40f;
@@ -112,7 +110,6 @@
             font-weight: 900;
         }
 
-        /* Columna Recogida */
         .recogida-time {
             font-size: 1.1rem;
             color: var(--naranja-obramat);
@@ -171,7 +168,6 @@
             <tr>
                 <th>Pedido / Cliente</th>
                 <th>Límite Recogida</th>
-                <th>P. Preparar</th>
                 <th>En Prep.</th>
                 <th>A Controlar</th>
                 <th>A Consolidar</th>
@@ -200,13 +196,12 @@
 
     const genID = () => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
 
-    // Inicialización: 2H cada 4 pedidos con INCREMENTO RANDOM (30-55 min)
+    // Inicialización: estados ahora tiene 4 elementos (En Prep, Control, Consolida, Listo)
     let pedidosNoListos = Array.from({length: 17}, (_, i) => {
         let es2h = (i % 4 === 0);
         let horaRecogida = null;
         if(es2h) {
             let d = new Date();
-            // Cambio 2: Aleatorio entre 30 y 55 minutos
             let randomIncrement = Math.floor(Math.random() * (55 - 30 + 1)) + 30;
             d.setMinutes(d.getMinutes() + randomIncrement);
             horaRecogida = d;
@@ -214,7 +209,7 @@
         return {
             id: genID(),
             cliente: "Cliente Ref." + (i + 1),
-            estados: [true, true, Math.random() > 0.5, false, false],
+            estados: [true, Math.random() > 0.5, false, false], // Reducido a 4 estados
             esperando: false,
             es2h: es2h,
             horaRecogida: horaRecogida
@@ -223,7 +218,8 @@
 
     let pedidosListos = Array.from({length: 4}, (_, i) => ({
         id: genID(), cliente: "VIP Ref." + (i + 100),
-        estados: [true, true, true, true, true], esperando: false, es2h: false
+        estados: [true, true, true, true], // Reducido a 4 estados
+        esperando: false, es2h: false
     }));
 
     function render() {
@@ -250,7 +246,6 @@
                                   p.horaRecogida.getMinutes().toString().padStart(2, '0');
             }
 
-            // Cambio 1: Eliminado "text-align: left", ahora todo el TD hereda el centrado general
             tr.innerHTML = `
                 <td>
                     <span class="order-id">#${p.id}</span>
