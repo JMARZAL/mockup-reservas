@@ -12,9 +12,8 @@
             --fondo: #f4f7f6;
             --texto: #2c3e50;
             --oscuro: #1e272e;
-            --naranja-claro: #f39c12;
-            /* EL NARANJA CORPORATIVO DE OBRAMAT */
             --naranja-obramat: #FE5000; 
+            --gris-suave: #95a5a6;
         }
 
         body {
@@ -37,34 +36,20 @@
             transform: rotate(-35deg); white-space: nowrap; user-select: none;
         }
 
-        /* --- PANTALLA DE ALERTA (NARANJA OBRAMAT) --- */
+        /* --- PANTALLA DE ALERTA NARANJA OBRAMAT --- */
         #alerta-cliente {
             display: none; 
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--naranja-obramat); /* Aplicado el Pantone Obramat */
+            background-color: var(--naranja-obramat);
             z-index: 20000;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
         }
-
-        .campana-svg {
-            width: 50%;
-            height: 50%;
-            fill: white; /* Cambiado a blanco para mejor contraste con el naranja fuerte */
-            animation: balanceo 0.5s infinite ease-in-out;
-        }
-
-        .alerta-texto {
-            font-size: 4rem;
-            font-weight: 900;
-            color: white; /* Texto en blanco para legibilidad profesional */
-            margin-top: 20px;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-        }
+        .campana-svg { width: 50%; height: 50%; fill: white; animation: balanceo 0.5s infinite ease-in-out; }
+        .alerta-texto { font-size: 4rem; font-weight: 900; color: white; margin-top: 20px; text-transform: uppercase; }
 
         @keyframes balanceo {
             0% { transform: rotate(0deg); }
@@ -73,7 +58,7 @@
             100% { transform: rotate(0deg); }
         }
 
-        /* --- CABECERA Y TABLAS --- */
+        /* --- INTERFAZ --- */
         header {
             background: var(--oscuro);
             color: white;
@@ -84,15 +69,11 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             position: relative;
         }
-
-        .settings-link {
-            position: absolute; top: 50%; right: 25px; transform: translateY(-50%);
-            cursor: pointer; color: #bdc3c7; transition: 0.3s; display: flex; align-items: center;
-        }
+        .settings-link { position: absolute; top: 50%; right: 25px; transform: translateY(-50%); cursor: pointer; color: #bdc3c7; transition: 0.3s; }
         .settings-link:hover { color: white; transform: translateY(-50%) rotate(90deg); }
         .settings-link svg { width: 28px; height: 28px; fill: currentColor; }
 
-        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; padding-right: 40px; }
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; }
 
         .tabs { display: flex; gap: 8px; margin-bottom: -2px; }
         .tab-btn {
@@ -102,18 +83,50 @@
         }
         .tab-btn.active { background: white; color: var(--azul); border-bottom: 3px solid var(--azul); }
 
-        .container {
-            background: white; padding: 20px; border-radius: 0 12px 12px 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); min-height: 480px;
-        }
+        .container { background: white; padding: 20px; border-radius: 0 12px 12px 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); min-height: 480px; }
 
         table { width: 100%; border-collapse: collapse; }
-        th { background: #f1f2f6; padding: 15px; font-size: 0.7rem; color: #778ca3; text-transform: uppercase; border-bottom: 2px solid #dfe4ea; }
-        td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #f1f2f6; font-size: 0.85rem; }
+        th { background: #f1f2f6; padding: 15px; font-size: 0.75rem; color: var(--gris-suave); text-transform: uppercase; border-bottom: 2px solid #dfe4ea; }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid #f1f2f6; }
+
+        /* Estilo para el ID de pedido más grande */
+        .order-id {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--oscuro);
+        }
 
         .status-badge { padding: 6px 0; border-radius: 5px; color: white; font-weight: bold; font-size: 0.65rem; display: inline-block; width: 85px; }
         .bg-hecho { background-color: var(--verde); }
         .bg-pendiente { background-color: var(--rojo); }
+
+        /* Badge 2H */
+        .badge-2h {
+            background: var(--oscuro);
+            color: #f1c40f;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-weight: 900;
+        }
+
+        /* Columna Recogida */
+        .recogida-time {
+            font-size: 1.1rem;
+            color: var(--naranja-obramat);
+            font-weight: 700;
+            display: block;
+        }
+        .countdown-timer {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            color: var(--rojo);
+            font-weight: bold;
+            display: block;
+            margin-top: 2px;
+        }
 
         .pagination { display: flex; justify-content: center; gap: 5px; padding: 20px 0; }
         .page-num { padding: 8px 14px; border: 1px solid #dcdde1; background: white; cursor: pointer; border-radius: 6px; font-weight: bold; }
@@ -122,18 +135,17 @@
         .btn-llegada { background: var(--azul); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
         .timer-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
         .timer-val { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: var(--rojo); }
+        
         .warning-icon { font-size: 1.3rem; animation: blink 1s infinite; }
-
-        @keyframes blink { 0% { opacity: 1; transform: scale(1.1); } 50% { opacity: 0.3; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.1); } }
-        .waiting-row { background-color: #fff4e5 !important; border-left: 5px solid var(--naranja-claro); }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        
+        .waiting-row { background-color: #fff4e5 !important; border-left: 6px solid var(--naranja-obramat); }
     </style>
 </head>
 <body>
 
 <div id="alerta-cliente">
-    <svg class="campana-svg" viewBox="0 0 24 24">
-        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/>
-    </svg>
+    <svg class="campana-svg" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 4.36 6 6.92 6 10v5l-2 2v1h16v-1l-2-2z"/></svg>
     <div class="alerta-texto">¡CLIENTE EN MOSTRADOR!</div>
 </div>
 
@@ -157,7 +169,14 @@
     <table>
         <thead>
             <tr>
-                <th>Pedido</th><th>P. Preparar</th><th>En Prep.</th><th>A Controlar</th><th>A Consolidar</th><th>Listo</th><th>Gestión Cliente</th>
+                <th>Pedido / Cliente</th>
+                <th>Límite Recogida</th>
+                <th>P. Preparar</th>
+                <th>En Prep.</th>
+                <th>A Controlar</th>
+                <th>A Consolidar</th>
+                <th>Listo</th>
+                <th>Gestión Cliente</th>
             </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -168,30 +187,43 @@
 <div class="watermark-overlay"><span class="watermark-text">MOCKUP DIGITAL. USO INTERNO</span></div>
 
 <script>
-    // --- PERSONALIZACIÓN ---
     const almacenTextoCompleto = localStorage.getItem('almacenActual') || '012 - USERA';
     const codigoAlmacen = almacenTextoCompleto.substring(0, 3);
     const prefijoPedido = "3" + codigoAlmacen;
 
     document.getElementById('header-title').innerText = `Control Recogida de pedidos Urgentes Almacén de ${almacenTextoCompleto}`;
-    document.getElementById('page-title').innerText = `Control Recogida - ${almacenTextoCompleto}`;
 
-    // --- LÓGICA DE DATOS ---
     let currentPage = 1;
     const itemsPerPage = 5; 
     let currentTab = 'pendientes';
     let activeTimers = {}; 
 
-    const genID = (n) => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
+    const genID = () => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
 
-    let pedidosNoListos = Array.from({length: 17}, (_, i) => ({
-        id: genID(i), cliente: "Cliente Ref." + (i + 1),
-        estados: [true, true, Math.random() > 0.5, false, false], esperando: false
-    }));
+    // Inicialización: 2H cada 4 pedidos con INCREMENTO RANDOM (30-55 min)
+    let pedidosNoListos = Array.from({length: 17}, (_, i) => {
+        let es2h = (i % 4 === 0);
+        let horaRecogida = null;
+        if(es2h) {
+            let d = new Date();
+            // Cambio 2: Aleatorio entre 30 y 55 minutos
+            let randomIncrement = Math.floor(Math.random() * (55 - 30 + 1)) + 30;
+            d.setMinutes(d.getMinutes() + randomIncrement);
+            horaRecogida = d;
+        }
+        return {
+            id: genID(),
+            cliente: "Cliente Ref." + (i + 1),
+            estados: [true, true, Math.random() > 0.5, false, false],
+            esperando: false,
+            es2h: es2h,
+            horaRecogida: horaRecogida
+        };
+    });
 
     let pedidosListos = Array.from({length: 4}, (_, i) => ({
-        id: genID(i + 100), cliente: "VIP Ref." + (i + 100),
-        estados: [true, true, true, true, true], esperando: false
+        id: genID(), cliente: "VIP Ref." + (i + 100),
+        estados: [true, true, true, true, true], esperando: false, es2h: false
     }));
 
     function render() {
@@ -208,11 +240,29 @@
         pageItems.forEach(p => {
             const tr = document.createElement('tr');
             if(p.esperando) tr.className = 'waiting-row';
+            
             const estaCompleto = p.estados.every(e => e === true);
             const mostrarWarning = p.esperando && !estaCompleto;
 
+            let strHoraRecogida = "--";
+            if(p.es2h && p.horaRecogida) {
+                strHoraRecogida = p.horaRecogida.getHours().toString().padStart(2, '0') + ":" + 
+                                  p.horaRecogida.getMinutes().toString().padStart(2, '0');
+            }
+
+            // Cambio 1: Eliminado "text-align: left", ahora todo el TD hereda el centrado general
             tr.innerHTML = `
-                <td><strong>#${p.id}</strong><br><small style="color:#95a5a6">${p.cliente}</small></td>
+                <td>
+                    <span class="order-id">#${p.id}</span>
+                    ${p.es2h ? '<span class="badge-2h">2H</span>' : ''}<br>
+                    <small style="color:var(--gris-suave); font-weight: bold;">${p.cliente}</small>
+                </td>
+                <td>
+                    ${p.es2h ? `
+                        <span class="recogida-time">${strHoraRecogida}</span>
+                        <span class="countdown-timer" id="countdown-${p.id}">--:--</span>
+                    ` : '<span style="color:#ccc">--</span>'}
+                </td>
                 ${p.estados.map(e => `<td><span class="status-badge ${e ? 'bg-hecho' : 'bg-pendiente'}">${e ? 'HECHO' : 'PENDIENTE'}</span></td>`).join('')}
                 <td>
                     <button class="btn-llegada" onclick="marcarLlegada('${p.id}')" ${p.esperando ? 'disabled' : ''}>
@@ -243,10 +293,7 @@
     }
 
     function marcarLlegada(id) {
-        // Alerta de campana con naranja corporativo
-        const alerta = document.getElementById('alerta-cliente');
-        alerta.style.display = 'flex';
-
+        document.getElementById('alerta-cliente').style.display = 'flex';
         let pedidoObj = null;
         let index = pedidosNoListos.findIndex(p => p.id === id);
         if (index !== -1) {
@@ -262,14 +309,10 @@
             pedidosNoListos.unshift(pedidoObj);
             currentTab = 'pendientes';
             currentPage = 1;
-            document.getElementById('btn-tab-pendientes').classList.add('active');
-            document.getElementById('btn-tab-listos').classList.remove('active');
             render();
         }
 
-        setTimeout(() => {
-            alerta.style.display = 'none';
-        }, 2000);
+        setTimeout(() => { document.getElementById('alerta-cliente').style.display = 'none'; }, 2000);
     }
 
     function changeTab(tab) {
@@ -280,16 +323,32 @@
     }
 
     function formatTime(s) {
-        const min = Math.floor(s / 60); const sec = s % 60;
-        return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        const min = Math.floor(Math.abs(s) / 60);
+        const sec = Math.abs(s) % 60;
+        return `${s < 0 ? '-' : ''}${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     }
 
     setInterval(() => {
+        const ahora = new Date();
         for (let id in activeTimers) {
             activeTimers[id]++;
             const el = document.getElementById(`timer-${id}`);
             if (el) el.innerText = formatTime(activeTimers[id]);
         }
+
+        pedidosNoListos.concat(pedidosListos).forEach(p => {
+            if(p.es2h && p.horaRecogida) {
+                const elCd = document.getElementById(`countdown-${p.id}`);
+                if(elCd) {
+                    const diffS = Math.floor((p.horaRecogida - ahora) / 1000);
+                    if(diffS > 0) {
+                        elCd.innerText = formatTime(diffS);
+                    } else {
+                        elCd.innerText = "¡LIMITE!";
+                    }
+                }
+            }
+        });
     }, 1000);
 
     render();
