@@ -83,7 +83,7 @@
         }
         .tab-btn.active { background: white; color: var(--azul); border-bottom: 3px solid var(--azul); }
 
-        .container { background: white; padding: 20px; border-radius: 0 12px 12px 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); min-height: 480px; }
+        .container { background: white; padding: 20px; border-radius: 0 12px 12px 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); min-height: 480px; display: flex; flex-direction: column; }
 
         table { width: 100%; border-collapse: collapse; }
         th { background: #f1f2f6; padding: 15px; font-size: 0.75rem; color: var(--gris-suave); text-transform: uppercase; border-bottom: 2px solid #dfe4ea; }
@@ -125,9 +125,25 @@
             margin-top: 2px;
         }
 
-        .pagination { display: flex; justify-content: center; gap: 5px; padding: 20px 0; }
+        .pagination { display: flex; justify-content: center; gap: 5px; padding: 20px 0 10px 0; }
         .page-num { padding: 8px 14px; border: 1px solid #dcdde1; background: white; cursor: pointer; border-radius: 6px; font-weight: bold; }
         .page-num.active { background: var(--azul); color: white; border-color: var(--azul); }
+
+        /* --- ESTILOS BARRA DE PROGRESO --- */
+        .progress-container {
+            width: 250px;
+            height: 6px;
+            background-color: #dfe4ea;
+            border-radius: 3px;
+            margin: 0 auto 20px auto;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--azul);
+            transition: width 0.1s linear; /* Micro-actualización limpia */
+        }
 
         .btn-llegada { background: var(--azul); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
         .timer-container { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; }
@@ -149,7 +165,7 @@
 <header>
     <h1 id="header-title">Control Recogida de pedidos Urgentes</h1>
     <a href="index.html" class="settings-link" title="Cambiar de Almacén">
-        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L13.4,2.81c-0.05-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L8.25,5.33c-0.58,0.24-1.12,0.56-1.62,0.94l-2.39-0.96c-0.22-0.08-0.47,0-0.59,0.22L1.74,8.87 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C3.84,11.36,3.82,11.67,3.82,12c0,0.33,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L13.4,2.81c-0.05-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L8.25,5.33c-0.58,0.24-1.12,0.56-1.62,0.94l-2.39-0.96c-0.22-0.08-0.47,0-0.59,0.22L1.74,8.87 c-0.11,0.2-0.06,0.47,0.12,0.61l2.03,1.58C3.84,11.36,3.82,11.67,3.82,12c0,0.33,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c(0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.11-0.2,0.06-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
     </a>
 </header>
 
@@ -177,26 +193,39 @@
         </thead>
         <tbody id="table-body"></tbody>
     </table>
+    
     <div class="pagination" id="pagination"></div>
+    
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
 </div>
 
 <div class="watermark-overlay"><span class="watermark-text">MOCKUP DIGITAL. USO INTERNO</span></div>
 
 <script>
+    const sonidoCampana = new Audio('https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg');
+
     const almacenTextoCompleto = localStorage.getItem('almacenActual') || '012 - USERA';
     const codigoAlmacen = almacenTextoCompleto.substring(0, 3);
     const prefijoPedido = "3" + codigoAlmacen;
 
     document.getElementById('header-title').innerText = `Control Recogida de pedidos Urgentes Almacén de ${almacenTextoCompleto}`;
+    document.getElementById('page-title').innerText = `Control Recogida - ${almacenTextoCompleto}`;
 
     let currentPage = 1;
     const itemsPerPage = 5; 
     let currentTab = 'pendientes';
     let activeTimers = {}; 
+    
+    // Configuración barra de progreso y auto-paginado
+    let autoPageInterval; 
+    let tiempoTranscurrido = 0;
+    const tiempoMaximo = 15000; // 15 segundos reales
+    const velocidadRefresco = 100; // Refresco visual cada 100ms
 
     const genID = () => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
 
-    // Inicialización: estados ahora tiene 4 elementos (En Prep, Control, Consolida, Listo)
     let pedidosNoListos = Array.from({length: 17}, (_, i) => {
         let es2h = (i % 4 === 0);
         let horaRecogida = null;
@@ -209,7 +238,7 @@
         return {
             id: genID(),
             cliente: "Cliente Ref." + (i + 1),
-            estados: [true, Math.random() > 0.5, false, false], // Reducido a 4 estados
+            estados: [true, Math.random() > 0.5, false, false], 
             esperando: false,
             es2h: es2h,
             horaRecogida: horaRecogida
@@ -218,7 +247,7 @@
 
     let pedidosListos = Array.from({length: 4}, (_, i) => ({
         id: genID(), cliente: "VIP Ref." + (i + 100),
-        estados: [true, true, true, true], // Reducido a 4 estados
+        estados: [true, true, true, true], 
         esperando: false, es2h: false
     }));
 
@@ -229,9 +258,20 @@
         document.getElementById('count-p').innerText = pedidosNoListos.length;
         document.getElementById('count-l').innerText = pedidosListos.length;
 
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const pageItems = data.slice(start, end);
+        const esperando = data.filter(p => p.esperando);
+        const normales = data.filter(p => !p.esperando);
+
+        let slotsDisponibles = itemsPerPage - esperando.length;
+        if (slotsDisponibles < 1) slotsDisponibles = 1; 
+
+        const totalPages = Math.ceil(normales.length / slotsDisponibles) || 1;
+        if (currentPage > totalPages) currentPage = 1;
+
+        const start = (currentPage - 1) * slotsDisponibles;
+        const end = start + slotsDisponibles;
+        const normalesPagina = normales.slice(start, end);
+
+        const pageItems = esperando.concat(normalesPagina);
 
         pageItems.forEach(p => {
             const tr = document.createElement('tr');
@@ -271,24 +311,75 @@
             `;
             tbody.appendChild(tr);
         });
-        renderPagination(data.length);
+        renderPagination(totalPages);
     }
 
-    function renderPagination(total) {
+    function renderPagination(totalPages) {
         const pagDiv = document.getElementById('pagination');
         pagDiv.innerHTML = '';
-        const pages = Math.ceil(total / itemsPerPage);
-        if(pages <= 1) return;
-        for (let i = 1; i <= pages; i++) {
+        if(totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
             const btn = document.createElement('button');
             btn.innerText = i; btn.className = `page-num ${i === currentPage ? 'active' : ''}`;
-            btn.onclick = () => { currentPage = i; render(); };
+            btn.onclick = () => { 
+                currentPage = i; 
+                render(); 
+                resetAutoPagination(); 
+            };
             pagDiv.appendChild(btn);
         }
     }
 
+    // GESTIÓN DEL AUTO-PAGINADO Y BARRA DE PROGRESO
+    function startAutoPagination() {
+        clearInterval(autoPageInterval);
+        tiempoTranscurrido = 0;
+        actualizarBarraVisual();
+
+        autoPageInterval = setInterval(() => {
+            tiempoTranscurrido += velocidadRefresco;
+            actualizarBarraVisual();
+
+            if (tiempoTranscurrido >= tiempoMaximo) {
+                tiempoTranscurrido = 0;
+                ejecutarRotacionPagina();
+            }
+        }, velocidadRefresco);
+    }
+
+    function actualizarBarraVisual() {
+        const barra = document.getElementById('progress-bar');
+        if (barra) {
+            const porcentaje = (tiempoTranscurrido / tiempoMaximo) * 100;
+            barra.style.width = porcentaje + '%';
+        }
+    }
+
+    function ejecutarRotacionPagina() {
+        const data = currentTab === 'pendientes' ? pedidosNoListos : pedidosListos;
+        const esperando = data.filter(p => p.esperando);
+        const normales = data.filter(p => !p.esperando);
+        let slotsDisponibles = itemsPerPage - esperando.length;
+        if (slotsDisponibles < 1) slotsDisponibles = 1;
+        const totalPages = Math.ceil(normales.length / slotsDisponibles) || 1;
+
+        if (currentPage < totalPages) {
+            currentPage++;
+        } else {
+            currentPage = 1;
+        }
+        render();
+    }
+
+    function resetAutoPagination() {
+        startAutoPagination();
+    }
+
     function marcarLlegada(id) {
+        sonidoCampana.play().catch(e => console.log("Audio en espera de click"));
         document.getElementById('alerta-cliente').style.display = 'flex';
+
         let pedidoObj = null;
         let index = pedidosNoListos.findIndex(p => p.id === id);
         if (index !== -1) {
@@ -305,6 +396,7 @@
             currentTab = 'pendientes';
             currentPage = 1;
             render();
+            resetAutoPagination(); 
         }
 
         setTimeout(() => { document.getElementById('alerta-cliente').style.display = 'none'; }, 2000);
@@ -315,6 +407,7 @@
         document.getElementById('btn-tab-pendientes').classList.toggle('active', tab === 'pendientes');
         document.getElementById('btn-tab-listos').classList.toggle('active', tab === 'listos');
         render();
+        resetAutoPagination();
     }
 
     function formatTime(s) {
@@ -323,6 +416,7 @@
         return `${s < 0 ? '-' : ''}${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     }
 
+    // Reloj secundario fijo a 1 segundo para los números de tiempo
     setInterval(() => {
         const ahora = new Date();
         for (let id in activeTimers) {
@@ -346,7 +440,9 @@
         });
     }, 1000);
 
+    // Arranque inicial
     render();
+    startAutoPagination();
 </script>
 </body>
 </html>
