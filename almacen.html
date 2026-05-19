@@ -129,7 +129,6 @@
         .page-num { padding: 8px 14px; border: 1px solid #dcdde1; background: white; cursor: pointer; border-radius: 6px; font-weight: bold; }
         .page-num.active { background: var(--azul); color: white; border-color: var(--azul); }
 
-        /* --- ESTILOS BARRA DE PROGRESO --- */
         .progress-container {
             width: 250px;
             height: 6px;
@@ -142,7 +141,7 @@
             width: 0%;
             height: 100%;
             background-color: var(--azul);
-            transition: width 0.1s linear; /* Micro-actualización limpia */
+            transition: width 0.1s linear;
         }
 
         .btn-llegada { background: var(--azul); color: white; border: none; padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
@@ -204,7 +203,32 @@
 <div class="watermark-overlay"><span class="watermark-text">MOCKUP DIGITAL. USO INTERNO</span></div>
 
 <script>
-    const sonidoCampana = new Audio('https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg');
+    // FUNCIÓN EXCLUSIVA: Genera un sonido "¡Ding!" de metal de 1 segundo de forma nativa sin archivos
+    function emitirSonidoAviso() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+            
+            const oscilador = ctx.createOscillator();
+            const controlVolumen = ctx.createGain();
+            
+            // Frecuencias combinadas para simular el metal de una campana de mostrador
+            oscilador.type = 'sine';
+            oscilador.frequency.setValueAtTime(1100, ctx.currentTime); // Tono agudo principal
+            
+            controlVolumen.gain.setValueAtTime(0.4, ctx.currentTime);
+            // El volumen baja a cero de forma matemática exactamente al llegar al segundo (1.0s)
+            controlVolumen.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+            
+            oscilador.connect(controlVolumen);
+            controlVolumen.connect(ctx.destination);
+            
+            oscilador.start();
+            oscilador.stop(ctx.currentTime + 1.0); // Parada física del sintetizador
+        } catch(e) {
+            console.log("El navegador bloqueó el contexto de audio inicial.");
+        }
+    }
 
     const almacenTextoCompleto = localStorage.getItem('almacenActual') || '012 - USERA';
     const codigoAlmacen = almacenTextoCompleto.substring(0, 3);
@@ -218,11 +242,10 @@
     let currentTab = 'pendientes';
     let activeTimers = {}; 
     
-    // Configuración barra de progreso y auto-paginado
     let autoPageInterval; 
     let tiempoTranscurrido = 0;
-    const tiempoMaximo = 15000; // 15 segundos reales
-    const velocidadRefresco = 100; // Refresco visual cada 100ms
+    const tiempoMaximo = 15000; 
+    const velocidadRefresco = 100; 
 
     const genID = () => prefijoPedido + Math.floor(10000 + Math.random() * 89999);
 
@@ -331,7 +354,6 @@
         }
     }
 
-    // GESTIÓN DEL AUTO-PAGINADO Y BARRA DE PROGRESO
     function startAutoPagination() {
         clearInterval(autoPageInterval);
         tiempoTranscurrido = 0;
@@ -377,7 +399,9 @@
     }
 
     function marcarLlegada(id) {
-        sonidoCampana.play().catch(e => console.log("Audio en espera de click"));
+        // Disparar campana nativa sintetizada
+        emitirSonidoAviso();
+
         document.getElementById('alerta-cliente').style.display = 'flex';
 
         let pedidoObj = null;
@@ -416,7 +440,6 @@
         return `${s < 0 ? '-' : ''}${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     }
 
-    // Reloj secundario fijo a 1 segundo para los números de tiempo
     setInterval(() => {
         const ahora = new Date();
         for (let id in activeTimers) {
@@ -440,7 +463,6 @@
         });
     }, 1000);
 
-    // Arranque inicial
     render();
     startAutoPagination();
 </script>
